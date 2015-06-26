@@ -1,0 +1,33 @@
+
+<div class="col-md-12" style="position:fixed; z-index: 1;">
+  <div class="col-md-12 page-id-header"> <h3>PLAYERS</h3>        
+  </div>
+  <div class="col-md-12 page-sub-nav"> 
+    <ul class="nav navbar-nav">
+      <li><a id="sort-btn" href="/players?sort=name" role="button">A-Z</a></li>
+      <li><a id="sort-btn" href="/players?sort=name_z_to_a" role="button">Z-A</a></li>
+    </ul>
+  </div>
+</div> <!-- End col-md-12 -->
+
+<div ng-app="app">
+  <!-- {{ 1 + 1 }} -->
+  <div class="col-md-11 main">
+    <div class="row">
+      <div ng-controller="playersCtrl" ng-init="fetchData()">
+        <div class="filter">
+          <label>Filter by name</label>
+          <input ng-model="nameFilter" list="names">
+          <datalist id="names">
+            <option ng-repeat="player in players">{{ player.name }}</option>
+          </datalist>
+        </div> <!-- End filter -->
+
+        <div class="col-md-3" ng-repeat="player in players | filter:{name: nameFilter}">
+          <p>{{ player.name }}</p>
+          <a href="/players/{{player.person_id}}" class="thumbnail"><img src="http://stats.nba.com/media/players/230x185/{{player.person_id}}.png" width="140px"></a>    
+        </div> <!-- End col-md-3 -->  
+      </div> <!-- End ng-controller -->
+    </div> <!-- End row -->
+  </div> <!-- End col-md-11 -->
+</div> <!-- End ng-app -->

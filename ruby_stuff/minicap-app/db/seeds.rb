@@ -1,0 +1,9 @@
+Product.create!([
+  {price: "11.35", title: "Casio F91W-1 Casual Sport Watch", image: "http://ecx.images-amazon.com/images/I/2179DC522HL.jpg", description: "Made in USA and Imported. Fancy.", category: "digital", brand: "Casio"},
+  {price: "205.0", title: "Seiko SNA411 Flight Alarm Chronograph Watch", image: "http://ecx.images-amazon.com/images/I/51urlnJgBpL.jpg", description: "Quality Japanese-Quartz movement. Hardlex crystal. Case diameter: 42mm. Stainless-steel case; Black dial; Date function; Chronograph functions. Water resistant to 660 feet.", category: "quartz", brand: "Seiko"},
+  {price: "24.99", title: "Timex T2H281 Easy Read Watch", image: "http://ecx.images-amazon.com/images/I/81gIc3sK7hL._UY679_.jpg", description: "Imported. Through the classic, versatile design. Quartz movement and analog display. Protective mineral crystal dial window. Feature leather band, brass case, second hand, Indiglo light, and date window at three o'clock position. Water resistant to 99 feet.", category: "Quartz", brand: "Timex"},
+  {price: "118.95", title: "G-Shock", image: "http://ecx.images-amazon.com/images/I/51BSTFWqozL._AA160_.jpg", description: "Adjustable band. Water resistant to 200 meters.", category: "Quartz", brand: "Casio"},
+  {price: "100.0", title: "Fancy watch", image: "http://ecx.images-amazon.com/images/I/41eytuKrAOL._SL246_SX190_CR0,0,190,246_.jpg", description: "A fancy watch.", category: "Quartz", brand: "Fancy"},
+  {price: "100.0", title: "Fancy watch", image: "http://ecx.images-amazon.com/images/I/41eytuKrAOL._SL246_SX190_CR0,0,190,246_.jpg", description: "A fancy watch.", category: "Quartz", brand: "Fancy"},
+  {price: "100.0", title: "Fancy watch", image: "http://ecx.images-amazon.com/images/I/41eytuKrAOL._SL246_SX190_CR0,0,190,246_.jpg", description: "A fancy watch.", category: "Quartz", brand: "Fancy"}
+])

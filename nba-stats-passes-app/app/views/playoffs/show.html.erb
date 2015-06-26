@@ -1,0 +1,828 @@
+<div class="col-md-12" style="position:fixed; z-index: 1;">
+  <div class="col-md-12 page-id-header">
+     <h3>2015 PLAYOFFS PLAYER PROFILE</h3>
+  </div>
+  <div class="col-md-12 page-sub-nav"> 
+    <h4><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %></h4>
+    </div>
+</div>
+<!-- Main Pane -->
+<!-- <div ng-app="app">
+  {{ 1 + 1 }}
+</div> -->
+
+<div class="col-md-11 main">
+  <div class="row" style="margin: 20px 0px">
+    <!-- Player Info -->
+    <div class="col-md-3 player-page-profile">
+      <div style="width: 100%">
+      <img src="http://stats.nba.com/media/players/230x185/<%= @po_data[0]["PLAYER_ID"] %>.png" width="200px">
+      </div>
+      <div class="player-page-name">
+        <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %></p>
+      </div>
+      <div class="player-page-info">
+      <h5><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>
+      </h5>
+      <img src="http://stats.nba.com/media/img/teams/logos/<%= @po_playerdata[0]["TEAM_ABBREVIATION"] %>_logo.svg" width="50">
+      <h5>Pos: <%= @po_playerdata[0]["POSITION"] %> | Exp: <%= @po_playerdata[0]["SEASON_EXP"] %> yrs</h5>
+      <h5>Record: <%= @po_playerteamdata[0]["W"] %>W - <%= @po_playerteamdata[0]["L"] %>L</h5>
+      <h5>Games Played: <%= @po_PlayerTotalsdata[0]["GP"] %></h5>
+      <h4><%= (@po_PlayerTotalsdata[0]["PTS"]/ @po_PlayerTotalsdata[0]["GP"].to_f).round(1) %> PTS / <%= (@po_PlayerTotalsdata[0]["REB"]/ @po_PlayerTotalsdata[0]["GP"].to_f).round(1) %> REB / <%= (@po_PlayerTotalsdata[0]["AST"]/ @po_PlayerTotalsdata[0]["GP"].to_f).round(1) %> AST</h4>  
+      
+      </div>
+    </div>
+    <!-- End Player Info -->
+    <!-- Main Player Stat Section -->
+    <div class="col-md-9 player-page-stats">
+
+      <!-- Tab Panel -->
+      <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role"presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+          <li role="presentation"><a href="#touches" aria-controls="touches" role="tab" data-toggle="tab">Touches</a></li>
+          <li role="presentation"><a href="#passes" aria-controls="passes" role="tab" data-toggle="tab">Passes</a></li>
+          <li role="presentation"><a href="#assists" aria-controls="assists" role="tab" data-toggle="tab">Assists</a></li>
+        </ul>
+
+        <!-- Tab tab-content -->
+        <div class="tab-content player-content">
+          
+          <div role="tabpanel" class="tab-pane" id="assists">
+            <!-- Player Assist Section -->
+            <div class="row">    
+              <div class="col-md-6">
+                <h4>Assists Made Top 5 </h4>
+                 <div id="assistmadenetwork"></div> 
+              </div>
+              <div class="col-md-6">
+                <h4>Assists Received Top 5</h4>
+                 <div id="assistreceivednetwork"></div>       
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:30px;">
+              <div class="col-md-6">
+                <h4>Assists Made Team Data</h4>
+                <table class="table table-bordered table-hover" style="font-size: 12px;">
+                 <thead>
+                   <th>To</th>
+                   <th>AST</th>
+                   <th>FGM</th>
+                   <th>FGA</th>
+                 </thead>                   
+                 <% @po_data.sort_by { |hash| hash["AST"]}.reverse. each do |hash| %>              
+                  <tbody>
+                   <td><a href="/playoffs/players/<%= hash['PASS_TEAMMATE_PLAYER_ID'] %>#assists"><%= hash["PASS_TO"] %></a>
+                   </td>
+                   <td><%= hash["AST"] %>
+                   </td>
+                   <td><%= hash["FGM"] %>
+                   </td>
+                   <td><%= hash["FGA"] %>
+                   </td>
+                  </tbody>
+                 <% end %>
+                </table>
+              </div> <!-- End col-md-6 -->
+                 
+              <div class="col-md-6">
+                <h4>Assists Received Team Data</h4>
+                <table class="table table-bordered table-hover" style="font-size: 12px;">
+                 <thead>
+                   <th>From</th>
+                   <th>AST</th>
+                   <th>FGM</th>
+                   <th>FGA</th>
+                 </thead>                  
+                 <% @po_ReceivedData.sort_by { |hash| hash["AST"]}.reverse. each do |hash| %>
+                  <tbody>
+                   <td><%= hash["PASS_TO"] %>
+                   </td>
+                   <td><%= hash["AST"] %>
+                   </td>
+                   <td><%= hash["FGM"] %>
+                   </td>
+                   <td><%= hash["FGA"] %>
+                   </td>
+                 </tbody>
+                 <% end %>
+                </table>
+              </div> <!-- End col-md-6 -->
+            </div>
+
+            <div class="col-md-10 col-md-offset-1">
+             <h4>ASSISTS AS PERCENTAGE OF TEAM TOTAL</h4>             
+               <div class="progress">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:  <%= @po_PlayerTotalsdata[0]['AST'].to_f / @po_playerteamdata[0]['AST'].to_f * 100 %>%;">      
+                   <%= (@po_PlayerTotalsdata[0]['AST'].to_f / @po_playerteamdata[0]['AST'].to_f * 100).to_i %>%        
+                </div>
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:  <%= @po_player_total_ast_recd.inject(:+).to_f / @po_playerteamdata[0]['AST'].to_f * 100 %>%;">      
+                   <%= (@po_player_total_ast_recd.inject(:+).to_f / @po_playerteamdata[0]['AST'].to_f * 100).to_i %>%        
+                </div>
+               </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+               <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["AST"] %> Assists Made, <%= @po_player_total_ast_recd.inject(:+) %> Assists Received</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+               <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["AST"] %> Assists</p>
+            </div>
+            <!-- End Player Assist Section -->
+          </div> <!-- End tabpanel -->
+            
+          <div role="tabpanel" class="tab-pane" id="passes">
+            <!-- Player Pass Section -->
+            <div class="row">
+              <div class="col-md-6">
+                <h4>Passes Made Top 5</h4>
+                <div id="passmadenetwork"></div> 
+              </div>
+              <div class="col-md-6">
+                <h4>Passes Received Top 5</h4>
+                <div id="passreceivednetwork"></div>    
+              </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+             <div class="col-md-6">
+              <h4>Passes Made Team Data</h4>
+              <table class="table table-bordered table-hover" style="font-size: 12px;">
+                <thead>
+                  <th>To</th>
+                  <th>PASS</th>
+                </thead>
+                <% @po_data.sort_by { |hash| hash["PASS"]}.reverse. each do |hash| %>
+                <tbody>
+                  <td><%= hash["PASS_TO"] %>
+                  </td>
+                  <td><%= hash["PASS"] %>
+                  </td>
+                </tbody>
+                <% end %>
+              </table>  
+             </div> <!-- End col-md-6 -->
+
+             <div class="col-md-6">
+              <h4>Passes Received Team Data</h4>
+                <table class="table table-bordered table-hover" style="font-size: 12px;">
+                  <thead>
+                    <th>From</th>
+                    <th>PASS</th>
+                  </thead>                  
+                  <% @po_ReceivedData.sort_by { |hash| hash["PASS"]}.reverse. each do |hash| %>                  
+                  <tbody>
+                    <td><%= hash["PASS_TO"] %>
+                    </td>
+                    <td><%= hash["PASS"] %>
+                    </td>
+                  </tbody>
+                  <% end %>
+                </table>
+             </div> <!-- End col-md-6 -->
+           </div>
+
+           <div class="col-md-10 col-md-offset-1">
+            <h4>PASSES AS PERCENTAGE OF TEAM TOTAL</h4>
+             <div class="progress">
+               <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:  <%= @po_player_total_passes.inject(:+).to_f / @po_team_passes_total.inject(:+).to_f * 100 %>%;">      
+                 <%= (@po_player_total_passes.inject(:+).to_f / @po_team_passes_total.inject(:+).to_f * 100).to_i %>%        
+               </div>
+               <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:  <%= @po_player_total_pass_recd.inject(:+).to_f / @po_team_passes_total.inject(:+).to_f * 100 %>%;">      
+                  <%= (@po_player_total_pass_recd.inject(:+).to_f / @po_team_passes_total.inject(:+).to_f * 100).to_i %>%        
+               </div>
+             </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+             <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_player_total_passes.inject(:+) %> Passes Made, <%= @po_player_total_pass_recd.inject(:+) %> Passes received</p>
+           </div>
+           <div class="col-md-5" style="text-align:right">
+             <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_team_passes_total.inject(:+) %> Passes</p>
+           </div>
+               
+           <div class="col-md-12">       
+              <div id="allpassreceivednetwork"></div>  
+           </div>
+          <!-- End Player Pass Section -->
+          </div> <!-- End tabpanel -->
+            
+          <div role="tabpanel" class="tab-pane" id="touches">
+            <!-- Player Individual Touches Section -->
+            <div class="col-md-12">
+              <div> 
+                <!-- Chart won't show if doc ready function is available in open_on_tab -->
+                <%= high_chart("playoff_touches", @touchesChart) %>
+
+                <%= high_chart("playoff_points", @pointsChart) %>
+              </div>                           
+            
+              <div class="col-md-10 col-md-offset-1">
+                <h4>TOUCHES AS PERCENTAGE OF TEAM TOTAL</h4>
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:  <%= @po_player_touches_total[0][15].to_f / @po_team_touches_total[0]["TCH_TOT"].to_f * 100 %>%;">      
+                    <%= (@po_player_touches_total[0][15].to_f / @po_team_touches_total[0]["TCH_TOT"].to_f * 100).to_i %>%        
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5 col-md-offset-1">
+                <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_player_touches_total[0][15] %> Touches</p>
+              </div>
+              <div class="col-md-5" style="text-align:right">
+                <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_team_touches_total[0]["TCH_TOT"] %> Touches</p>
+              </div>              
+            </div>
+            <!-- End Player Individual Touches Section -->
+          </div> <!-- End tabpanel -->
+
+          <div role="tabpanel" class="tab-pane active" id="overview">
+            <!--sample of all stats as % of team -->
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>Minutes</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["MIN"].to_f / (@po_playerteamdata[0]["MIN"] * 5).to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["MIN"].to_f / (@po_playerteamdata[0]["MIN"] * 5).to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["MIN"].round %> Minutes</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["MIN"].round * 5 %> Minutes</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>Points</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["PTS"].to_f / @po_playerteamdata[0]["PTS"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["PTS"].to_f / @po_playerteamdata[0]["PTS"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["PTS"] %> Points</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["PTS"] %> Points</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FGM</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FGM"].to_f / @po_playerteamdata[0]["FGM"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FGM"].to_f / @po_playerteamdata[0]["FGM"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FGM"] %> FGM</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FGM"] %> FGM</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FGA</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FGA"].to_f / @po_playerteamdata[0]["FGA"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FGA"].to_f / @po_playerteamdata[0]["FGA"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FGA"] %> FGA</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FGA"] %> FGA</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FG3M</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FG3M"].to_f / @po_playerteamdata[0]["FG3M"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FG3M"].to_f / @po_playerteamdata[0]["FG3M"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FG3M"] %> FG3M</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FG3M"] %> FG3M</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FG3A</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FG3A"].to_f / @po_playerteamdata[0]["FG3A"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FG3A"].to_f / @po_playerteamdata[0]["FG3A"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FG3A"] %> FG3A</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FG3A"] %> FG3A</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FTM</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FTM"].to_f / @po_playerteamdata[0]["FTM"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FTM"].to_f / @po_playerteamdata[0]["FTM"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FTM"] %> FTM</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FTM"] %> FTM</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>FTA</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["FTA"].to_f / @po_playerteamdata[0]["FTA"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["FTA"].to_f / @po_playerteamdata[0]["FTA"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["FTA"] %> FTA</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["FTA"] %> FTA</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>OREB</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["OREB"].to_f / @po_playerteamdata[0]["OREB"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["OREB"].to_f / @po_playerteamdata[0]["OREB"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["OREB"] %> OREB</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["OREB"] %> OREB</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>DREB</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["DREB"].to_f / @po_playerteamdata[0]["DREB"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["DREB"].to_f / @po_playerteamdata[0]["DREB"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["DREB"] %> DREB</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["DREB"] %> DREB</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>REB</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["REB"].to_f / @po_playerteamdata[0]["REB"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["REB"].to_f / @po_playerteamdata[0]["REB"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["REB"] %> REB</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["REB"] %> REB</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>AST</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["AST"].to_f / @po_playerteamdata[0]["AST"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["AST"].to_f / @po_playerteamdata[0]["AST"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["AST"] %> AST</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["AST"] %> AST</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>TOV</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["TOV"].to_f / @po_playerteamdata[0]["TOV"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["TOV"].to_f / @po_playerteamdata[0]["TOV"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["TOV"] %> TOV</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["TOV"].round %> TOV</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>STL</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["STL"].to_f / @po_playerteamdata[0]["STL"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["STL"].to_f / @po_playerteamdata[0]["STL"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["STL"] %> STL</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["STL"] %> STL</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>BLK</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["BLK"].to_f / @po_playerteamdata[0]["BLK"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["BLK"].to_f / @po_playerteamdata[0]["BLK"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["BLK"] %> BLK</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["BLK"] %> BLK</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>BLKA</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["BLKA"].to_f / @po_playerteamdata[0]["BLKA"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["BLKA"].to_f / @po_playerteamdata[0]["BLKA"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["BLKA"] %> BLKA</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["BLKA"] %> BLKA</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>PF</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["PF"].to_f / @po_playerteamdata[0]["PF"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["PF"].to_f / @po_playerteamdata[0]["PF"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["PF"] %> PF</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["PF"] %> PF</p>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1 overview-bars">
+              <h4>PFD</h4>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: <%= @po_PlayerTotalsdata[0]["PFD"].to_f / @po_playerteamdata[0]["PFD"].to_f * 100 %>%;">
+                  <%= (@po_PlayerTotalsdata[0]["PFD"].to_f / @po_playerteamdata[0]["PFD"].to_f * 100).to_i %>%
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+              <p><%= @po_playerdata[0]["DISPLAY_FIRST_LAST"] %>:<br/> <%= @po_PlayerTotalsdata[0]["PFD"] %> PFD</p>
+            </div>
+            <div class="col-md-5" style="text-align:right">
+              <p><%= @po_playerdata[0]["TEAM_CITY"] %> <%= @po_playerdata[0]["TEAM_NAME"] %>:<br/> <%= @po_playerteamdata[0]["PFD"] %> PFD</p>
+            </div>
+
+
+          </div> <!-- End tab-panel -->
+        </div> 
+        <!-- End tab-content -->
+      </div>
+      <!--  End Tab Panel -->
+    </div> <!--  End col-md-9 -->
+  <!-- End Main Player Stat Section -->
+  </div> <!-- End row -->
+
+  <div class="col-md-12 social-share">
+    <div class="col-md-1 col-md-offset-5" style="text-align">
+      
+  </div>
+  
+</div>
+
+<!-- Script for assists and passing networks -->
+   <script type="text/javascript">
+
+   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var target = $(e.target).attr("href")
+      if (target === "#assists") {
+        loadAssistsNetworks();
+      }
+    });
+// ASSIST MADE NETWORK       
+function loadAssistsNetworks() {
+     var nodes = [
+       {id: <%= @po_data[0]["PLAYER_ID"] %>,  label: '<%= @po_data[0]["PLAYER_NAME_LAST_FIRST"] %>', x: 50, y: 50, shape: 'star'},
+       <% @po_data.sort_by { |hash| hash["AST"]}.reverse[0..4].each do |hash| %>
+         {id: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, value: <%= hash["AST"] %>, label: '<%= hash["PASS_TO"] %>', title: '<%= hash["AST"] %> Assists made to <%= hash["PASS_TO"] %>' },
+       <% end %>
+     ];
+
+     // create an array with edges
+     // value = FGA
+     var edges = [
+       <% @po_data.sort_by { |hash| hash["AST"]}.reverse[0..4].each do |hash| %>
+         {from: <%= @po_data[0]["PLAYER_ID"] %>, to: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, title: 'FGA: <%= hash["FGA"]%>', value: <%= hash["FGA"]%>},
+       <% end %>        
+     ];
+     // create a network
+     var container = document.getElementById('assistmadenetwork');
+     var data= {
+       nodes: nodes,
+       edges: edges,
+     };
+     var options = {
+      navigation: {
+        enabled: true
+      },
+      physics: {
+        barnesHut: {
+          enabled: 'false'
+        },
+        repulsion: {
+          nodeDistance: 100,
+          springLength: 150,
+          springConstant: 0.5
+        }
+      },
+       nodes: {
+         shape: 'dot',
+         radiusMin: 5,
+         radiusMax: 50,
+         color: {
+           background: '#35B672',
+           border: '#1B7E4A'
+         }
+         // fontFace: 'HelveticaNeue-Light',
+       },
+       edges: {
+        
+         widthMax: 20,
+       },
+       width: '350px',
+       height: '400px',
+     };
+// var dropdown = document.getElementById("dropdownID");
+// dropdown.onchange = update;
+     var network = new vis.Network(container, data, options);
+
+// ASSIST RECEIVED NETWORK
+
+      var nodes = [
+        {id: <%= @po_ReceivedData[0]["PLAYER_ID"] %>,  label: '<%= @po_data[0]["PLAYER_NAME_LAST_FIRST"] %>', x: 50, y: 50, shape: 'star'},
+        <% @po_ReceivedData.sort_by { |hash| hash["AST"]}.reverse[0..4].each do |hash| %>
+          {id: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, value: <%= hash["AST"] %>, label: '<%= hash["PASS_TO"] %>', title: '<%= hash["AST"] %> Assists received from <%= hash["PASS_TO"] %>' },
+        <% end %>
+      ];
+
+      // create an array with edges
+      // value = Frequency
+      var edges = [
+        <% @po_ReceivedData.sort_by { |hash| hash["AST"]}.reverse[0..4].each do |hash| %>
+          {from: <%= @po_ReceivedData[0]["PLAYER_ID"] %>, to: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, title: 'Field Goal %: <%= hash["FG_PCT"]%>', value: <%= hash["FG_PCT"]%> },
+        <% end %>       
+      ];
+
+      // create a network
+      var container = document.getElementById('assistreceivednetwork');
+      var data= {
+        nodes: nodes,
+        edges: edges,
+      };
+      var options = {
+        navigation: {
+          enabled: true
+        },
+        physics: {
+          barnesHut: {
+            enabled: 'false'
+          },
+          repulsion: {
+            nodeDistance: 100,
+            springLength: 150,
+            springConstant: 0.5
+          }
+        },
+        nodes: {
+          shape: 'dot',
+          radiusMin: 5,
+          radiusMax: 50,
+          // fontFace: 'HelveticaNeue-Light',
+
+        },
+        edges: {
+         
+          widthMax: 20,
+        },
+        width: '350px',
+        height: '400px',
+      };
+// var dropdown = document.getElementById("dropdownID");
+// dropdown.onchange = update;
+
+      var network = new vis.Network(container, data, options);
+}
+// PASSES BEGIN
+//Jquery to properly load network viz in tabs
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+   var target = $(e.target).attr("href")
+   if (target === "#passes") {
+     loadPassesNetworks();
+   }
+ });
+
+//PASS MADE NETWORK
+function loadPassesNetworks() { 
+      var nodes = [
+        {id: <%= @po_data[0]["PLAYER_ID"] %>,  label: '<%= @po_data[0]["PLAYER_NAME_LAST_FIRST"] %>', x: 50, y: 50, shape: 'star'},
+        <% @po_data.sort_by { |hash| hash["PASS"]}.reverse[0..4].each do |hash| %>
+          {id: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, value: <%= hash["PASS"] %>, label: '<%= hash["PASS_TO"] %>', title: '<%= hash["PASS"] %> Passes made to <%= hash["PASS_TO"] %>' },
+        <% end %>
+      ];
+
+      // create an array with edges
+      // value = Frequency
+      var edges = [
+        <% @po_data.sort_by { |hash| hash["PASS"]}.reverse[0..4].each do |hash| %>
+          {from: <%= @po_data[0]["PLAYER_ID"] %>, to: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, title: 'Pass frequency: <%= hash["FREQUENCY"]%>',value: <%= hash["FREQUENCY"]%>},
+        <% end %>        
+      ];
+      // create a network
+      var container = document.getElementById('passmadenetwork');
+      var data= {
+        nodes: nodes,
+        edges: edges,
+      };
+      var options = {
+        navigation: {
+          enabled: true
+        },
+        physics: {
+          barnesHut: {
+            enabled: 'false'
+          },
+          repulsion: {
+            nodeDistance: 100,
+            springLength: 150,
+            springConstant: 0.5
+          }
+        },
+        nodes: {
+          shape: 'dot',
+          radiusMin: 5,
+          radiusMax: 50,
+          color: {
+            background: '#35B672',
+            border: '#1B7E4A'
+          }
+          // fontFace: 'HelveticaNeue-Light',
+        },
+        edges: {
+         
+          widthMax: 20,
+        },
+        width: '350px',
+        height: '400px',
+      };
+// var dropdown = document.getElementById("dropdownID");
+// dropdown.onchange = update;
+      var network = new vis.Network(container, data, options);
+
+//PASS RECEIVED NETWORK
+      var nodes = [
+        {id: <%= @po_ReceivedData[0]["PLAYER_ID"] %>,  label: '<%= @po_data[0]["PLAYER_NAME_LAST_FIRST"] %>', x: 50, y: 50, shape: 'star'},
+        <% @po_ReceivedData.sort_by { |hash| hash["PASS"]}.reverse[0..4].each do |hash| %>
+          {id: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, value: <%= hash["PASS"] %>, label: '<%= hash["PASS_TO"] %>' , title: '<%= hash["PASS"] %> Passes received from <%= hash["PASS_TO"] %>' },
+        <% end %>
+      ];
+
+      // create an array with edges
+      // value = Frequency
+      var edges = [
+        <% @po_ReceivedData.sort_by { |hash| hash["PASS"]}.reverse[0..4].each do |hash| %>
+          {from: <%= @po_ReceivedData[0]["PLAYER_ID"] %>, to: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, title: 'Pass Frequency: <%= hash["FREQUENCY"]%>',value: <%= hash["FREQUENCY"]%>}, 
+        <% end %>       
+      ];
+
+      // create a network
+      var container = document.getElementById('passreceivednetwork');
+      var data= {
+        nodes: nodes,
+        edges: edges,
+      };
+      var options = {
+        navigation: {
+          enabled: true
+        },
+        physics: {
+          barnesHut: {
+            enabled: 'false'
+          },
+          repulsion: {
+            nodeDistance: 100,
+            springLength: 150,
+            springConstant: 0.5
+          }
+        },
+        nodes: {
+          shape: 'dot',
+          radiusMin: 5,
+          radiusMax: 50,
+          // fontFace: 'HelveticaNeue-Light',
+
+        },
+        edges: {
+         
+          widthMax: 20,
+        },
+        // freezeForStabilization: 'true',
+        width: '350px',
+        height: '400px',
+      };
+// var dropdown = document.getElementById("dropdownID");
+// dropdown.onchange = update;
+
+      var network = new vis.Network(container, data, options);
+//ALL PASSES RECD TEST
+      // var nodes = [
+      //   {id: <%= @po_ReceivedData[0]["PLAYER_ID"] %>,  label: '<%= @po_data[0]["PLAYER_NAME_LAST_FIRST"] %>', x: 50, y: 50, shape: 'star'},
+      //   <% @po_ReceivedData.sort_by { |hash| hash["PASS"]}.reverse.each do |hash| %>
+      //     {id: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, value: <%= hash["PASS"] %>, label: '<%= hash["PASS_TO"] %>' , title: '<%= hash["PASS"] %> Passes received from <%= hash["PASS_TO"] %>' },
+      //   <% end %>
+      // ];
+
+      // create an array with edges
+      // value = Frequency
+      // var edges = [
+      //   <% @po_ReceivedData.sort_by { |hash| hash["PASS"]}.reverse.each do |hash| %>
+      //     {from: <%= @po_ReceivedData[0]["PLAYER_ID"] %>, to: <%= hash["PASS_TEAMMATE_PLAYER_ID"] %>, title: 'Pass Frequency: <%= hash["FREQUENCY"]%>',value: <%= hash["FREQUENCY"]%>}, 
+      //   <% end %>       
+      // ];
+
+      // create a network
+      // var container = document.getElementById('allpassreceivednetwork');
+      // var data= {
+      //   nodes: nodes,
+      //   edges: edges,
+      // };
+      // var options = {
+      //   navigation: {
+      //     enabled: true
+      //   },
+      //   physics: {
+      //     barnesHut: {
+      //       enabled: 'false'
+      //     },
+      //     repulsion: {
+      //       nodeDistance: 150,
+      //       springLength: 150,
+      //       springConstant: 0.5
+      //     }
+      //   },
+      //   nodes: {
+      //     shape: 'dot',
+      //     radiusMin: 5,
+      //     radiusMax: 50,
+          // fontFace: 'HelveticaNeue-Light',
+
+        // },
+        // edges: {
+         
+        //   widthMax: 20,
+        // },
+        // freezeForStabilization: 'true',
+      //   width: '500px',
+      //   height: '500px',
+      // };
+// var dropdown = document.getElementById("dropdownID");
+// dropdown.onchange = update;
+
+      // var network = new vis.Network(container, data, options);
+}     
+
+</script>  
+
+  

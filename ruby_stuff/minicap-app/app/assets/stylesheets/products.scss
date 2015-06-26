@@ -1,0 +1,24 @@
+// Place all the styles related to the products controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+header {
+  margin: 4% 4% 0px;
+}
+
+.container {
+  margin: 5% 0px 5%;
+  padding: 0px 2%; 
+}
+
+.sidebar {
+  margin: 5% 0px;
+  float:left;
+}
+
+.product_grid {
+  float: left;
+  padding: 20px;
+  margin: 10px 25px;
+  width: 400px;
+}
+

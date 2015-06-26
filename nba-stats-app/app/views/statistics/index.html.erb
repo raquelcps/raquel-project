@@ -1,0 +1,28 @@
+<h1>Stats will be here</h1>
+
+<table class="table">
+  <thead>
+    <th>Player</th>
+    <th>Points</th>
+  </thead>
+
+<% @Leaders.each do |leader| %>
+  <tbody>
+    <td><%= leader.display_name %></td>
+    <td><%= leader.value %></td>
+  </tbody>
+<% end %>
+</table>
+
+<p><%= @my_speed %></p>
+<p><%= @my_touches%></p>
+
+<table class="table">
+
+<tbody>
+  <td><%= @my_speed %></td>
+  <td><%= @my_touches%></td>
+  <td><%= @my_pass%></td>
+  <td><%= @my_assist%></td>
+</tbody>
+</table>

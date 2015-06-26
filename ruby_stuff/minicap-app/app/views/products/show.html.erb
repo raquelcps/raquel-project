@@ -1,0 +1,59 @@
+<div class="container">
+<h1> <%= @product.title %></h1>
+<h1> <%= @product.discount_message %></h1>
+
+<% if @product.vendor %>
+<h4><%= @product.vendor.name %></h4>
+<% end %>
+
+<ul>
+<% @product.product_options.each do |product_option| %>
+  <li><%= product_option.name %></li>
+<% end %>
+</ul>
+
+<!-- Number to currency rails helper method-->
+<h3><%= number_to_currency(@product.price) %></h3>
+<p> <img src = "<%= @product.image %>" width="150px"></p>
+<!-- Split up multi sentence description and display as list -->
+<% split_description = @product.description.split(".") %>
+<% split_description.each do | single_item | %>
+<ul>
+  <li><%= single_item %></li>
+</ul>
+<% end %>
+<p><%= @product.brand %></p>
+<p>Category: <%= @product.category %></p>
+<p><a href="/products/<%= @product.id %>" data-method="delete" rel="nofollow">Delete</a></p>
+<hr>
+
+<table>
+<tr>
+<th>Subtotal</th>
+<th>Tax</th>
+<th>Total</th>
+</tr>
+<tr>
+<td><%= number_to_currency@product.subtotal %></td>
+<td><%= number_to_currency@product.tax %></td>
+<td><%= number_to_currency@product.total %></td>
+</tr>
+</table>
+
+<% if current_user %>
+<h4>Hello <%= current_user.email %></h4>
+<% end %>
+
+<%= form_tag '/orders' do%>
+<%= label_tag :quantity %>
+<%= text_field_tag :quantity %>
+<!-- Hidden fields -->
+<%= hidden_field_tag :product_id, @product.id %>
+<%= hidden_field_tag :price, @product.subtotal %>
+<%= hidden_field_tag :tax, @product.tax %>
+<%= hidden_field_tag :total_price, @product.total %>
+
+<%= submit_tag 'Buy Now' %>
+<% end %>
+
+</div>
